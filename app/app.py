@@ -69,7 +69,7 @@ st.markdown("""
 # 3. Carregamento e Limpeza de Dados (Igual ao seu)
 @st.cache_data
 def load_data():
-    df = pd.read_csv('prf_es_clean.csv')
+    df = pd.read_csv('app/prf_es_clean.csv')
     df['hora_inteira'] = pd.to_datetime(df['horario'], format='%H:%M:%S', errors='coerce').dt.hour
     for col in ['latitude', 'longitude']:
         df[col] = df[col].astype(str).str.replace(',', '.')
