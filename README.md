@@ -6,7 +6,7 @@ Este projeto (Projeto Integrador III) visa analisar dados abertos da Polícia Ro
 
 Sistema desenvolvido para análise de acidentes da PRF no Espírito Santo.
 
-[🔗 Assista a demonstração no YouTube:](https://youtu.be/7HDAW45lSng)
+[🔗 Assista a demonstração no YouTube](https://youtu.be/7HDAW45lSng)
 
 ## Funcionalidades
 - **Análise Estatística e EDA:** Identificação de horários de pico, tipos de pista mais propensos a acidentes e top causas.
