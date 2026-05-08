@@ -2,6 +2,12 @@
 
 Este projeto (Projeto Integrador III) visa analisar dados abertos da Polícia Rodoviária Federal referentes a acidentes no estado do Espírito Santo. O foco é identificar os principais causadores de acidentes, rodovias mais perigosas e implementar um modelo de Machine Learning capaz de prever se um acidente tem probabilidade de ser grave/fatal dadas certas condições de via e clima.
 
+## 🎥 Demonstração do Projeto
+
+Sistema desenvolvido para análise de acidentes da PRF no Espírito Santo utilizando Ciência de Dados e Machine Learning.
+
+[![Assistir demonstração](https://img.youtube.com/vi/SEU_ID/0.jpg)](https://youtu.be/7HDAW45lSng)
+
 ## Funcionalidades
 - **Análise Estatística e EDA:** Identificação de horários de pico, tipos de pista mais propensos a acidentes e top causas.
 - **Mapa de Calor:** Concentração geográfica de ocorrências no ES.
