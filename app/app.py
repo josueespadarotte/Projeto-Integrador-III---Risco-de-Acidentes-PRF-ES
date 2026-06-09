@@ -3,70 +3,172 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
+import joblib
 
 # 1. Configurações de Interface
 st.set_page_config(page_title="PRF-ES Dashboard", layout="wide", page_icon="🚔")
 
-# 2. Estilização CSS "PRO" (Apenas visual, nada de funcionalidade)
+# 2. Estilização CSS "PRO" e Adaptável ao Dark/Light Mode
 st.markdown("""
     <style>
-    /* Fundo com gradiente linear suave para dar profundidade */
-    .stApp {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    }
-
-    /* Sidebar mais limpa e moderna */
-    [data-testid="stSidebar"] {
-        background-color: #ffffff;
-        border-right: 1px solid #dee2e6;
-    }
-
-    /* Tags dos filtros em Azul PRF */
+    /* Tags dos filtros em Azul (Ajustado para ficar bom no claro e escuro) */
     span[data-baseweb="tag"] {
-        background-color: #002D5E !important;
+        background-color: #004080 !important;
         color: white !important;
         border-radius: 5px !important;
     }
     
     .stSlider > div > div > div > div {
-        background-color: #002D5E !important;
+        background-color: #004080 !important;
     }
 
-    /* Cards de Métricas Estilo 'Glassmorphism' Suave */
+    /* Cards de Métricas Dinâmicos */
     div[data-testid="stMetric"] {
-        background-color: #ffffff;
+        /* Usa a cor secundária do tema (cinza claro no Light, cinza escuro no Dark) */
+        background-color: var(--secondary-background-color) !important;
         padding: 25px !important;
         border-radius: 15px !important;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-        border-left: 6px solid #002D5E !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+        border-left: 6px solid #004080 !important; 
         transition: transform 0.2s ease-in-out;
     }
     
-    /* Efeito de hover nos cards (detalhe de luxo) */
+    /* Efeito de hover nos cards */
     div[data-testid="stMetric"]:hover {
         transform: translateY(-5px);
     }
 
-    /* Títulos mais elegantes */
+    /* Títulos principais adaptáveis */
     h1 {
         font-weight: 800 !important;
-        color: #002D5E !important;
         letter-spacing: -1px;
     }
 
     /* Botão com sombra e cor sólida */
     div.stButton > button {
-        background-color: #002D5E;
+        background-color: #004080;
         color: white;
         border-radius: 10px;
         border: none;
         font-weight: 600;
-        box-shadow: 0 4px 6px rgba(0, 45, 94, 0.2);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+
+    /* Subtítulo */
+    .subtitulo-header {
+        font-size: 22px !important;
+        color: var(--text-color) !important; /* Adapta automático */
+        opacity: 0.8; /* Dá o tom cinza suave sem perder a cor original */
+        font-weight: 500 !important;
+        margin-top: -10px !important;
+        margin-bottom: 30px !important;
+    }
+
+    /* Rótulos das Métricas (ex: "Total de Ocorrências") */
+    [data-testid="stMetricLabel"] * {
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        color: var(--text-color) !important;
+        opacity: 0.7;
+    }
+
+    /* Valores das Métricas (os números) */
+    [data-testid="stMetricValue"] {
+        font-size: 36px !important;
+        font-weight: 800 !important;
+    }
+
+    /* ======== CENTRALIZAÇÃO E EXPANSÃO DAS ABAS (TABS) ======== */
+    div[data-testid="stTabList"] {
+        display: flex !important;
+        justify-content: center !important; /* Centraliza as abas conforme as linhas roxas */
+        width: 100% !important;
+        gap: 15px !important; /* Espaçamento entre os blocos */
+    }
+
+    button[data-baseweb="tab"] {
+        font-size: 22px !important; /* Letras maiores para formato botão profissional */
+        font-weight: 700 !important;
+        padding: 10px 30px !important; /* Mais área de clique */
+        border-radius: 8px 8px 0 0 !important;
+    }
+    
+    button[data-baseweb="tab"] p {
+        font-size: 22px !important;
+        font-weight: 700 !important;
+    }
+
+    /* Títulos dos Gráficos na aba de estatísticas */
+    .chart-title {
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        color: var(--text-color) !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* Título do Expander */
+    [data-testid="stExpander"] summary p {
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        color: var(--text-color) !important;
+    }
+
+    /* Texto do Rodapé */
+    .rodape-dash {
+        font-size: 15px !important;
+        color: var(--text-color) !important;
+        opacity: 0.6;
+        margin-top: 30px !important;
+        font-weight: 500 !important;
+    }
+
+    /* ======== NOVOS AJUSTES PARA A BARRA LATERAL (SIDEBAR) ======== */
+
+    /* Filtros Padrões (Município, Via, etc) */
+    [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p,
+    [data-testid="stSidebar"] label p {
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        color: var(--text-color) !important;
+    }
+
+    /* ======== EXCLUSIVO: NOVO MODELO DA FAIXA HORÁRIA (SLIDER) ======== */
+    
+    /* Título do Slider muito maior, em negrito e destacado em Azul PRF */
+    div[data-testid="stSlider"] label p {
+        font-size: 19px !important;
+        font-weight: 700 !important;
+        color: #004080 !important;
+        margin-bottom: 8px !important;
+    }
+
+    /* Números flutuantes maiores com fundo estilo "tag" discreto para parecer profissional */
+    div[data-testid="stThumbValue"] {
+        font-size: 17px !important;
+        font-weight: 800 !important;
+        color: #004080 !important;
+        background-color: var(--secondary-background-color) !important;
+        padding: 3px 10px !important;
+        border-radius: 8px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+    }
+
+    /* Números das extremidades (0 e 23) maiores e mais visíveis */
+    div[data-testid="stSlider"] span[data-baseweb="typography"] {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        opacity: 0.9 !important;
+    }
+
+    /* Linha do Slider ligeiramente mais espessa e moderna */
+    div[data-testid="stSlider"] > div > div > div {
+        height: 7px !important;
+        border-radius: 4px !important;
     }
     </style>
     """, unsafe_allow_html=True)
-
-# 3. Carregamento e Limpeza de Dados (Igual ao seu)
+# 3. Carregamento e Limpeza de Dados 
 @st.cache_data
 def load_data():
     df = pd.read_csv('app/prf_es_clean.csv')
@@ -78,7 +180,7 @@ def load_data():
 
 df = load_data()
 
-# --- SIDEBAR (Igual ao seu) ---
+# --- SIDEBAR   ---
 st.sidebar.image("https://logodownload.org/wp-content/uploads/2014/10/prf-logo-1.png", width=140)
 st.sidebar.title("Central de Comando")
 
@@ -87,7 +189,7 @@ with st.sidebar.expander("📍 Filtros de Localização", expanded=True):
     rodovias = st.multiselect("Rodovia (BR)", sorted(df['br'].unique().astype(str)))
 
 with st.sidebar.expander("☁️ Condições da Via"):
-    clima = st.multiselect("Condição Climática", df['condicao_metereologica'].unique(), default=df['condicao_metereologica'].unique())
+    clima = st.multiselect("Condition Climática", df['condicao_metereologica'].unique(), default=df['condicao_metereologica'].unique())
     pista = st.multiselect("Tipo de Pista", df['tipo_pista'].unique(), default=df['tipo_pista'].unique())
 
 horarios = st.sidebar.slider("⏰ Faixa Horária", 0, 23, (0, 23))
@@ -103,7 +205,7 @@ df_f = df_f[
 
 # --- PAINEL PRINCIPAL ---
 st.title("🚓 Sistema de Inteligência Viária - PRF Espírito Santo")
-st.markdown("Monitoramento em tempo real de pontos críticos e severidade de acidentes.")
+st.markdown("<p class='subtitulo-header'>Monitoramento em tempo real de pontos críticos e severidade de acidentes.</p>", unsafe_allow_html=True)
 
 kpi1, kpi2, kpi3, kpi4 = st.columns(4)
 with kpi1:
@@ -130,17 +232,17 @@ with aba_mapa:
 with aba_estatisticas:
     col_a, col_b = st.columns(2)
     with col_a:
-        st.write("**Top 10 Causas de Acidentes**")
+        st.markdown("<div class='chart-title'>Top 10 Causas de Acidentes</div>", unsafe_allow_html=True)
         causas = df_f['causa_acidente'].value_counts().head(10).reset_index()
         fig_causa = px.bar(causas, x='count', y='causa_acidente', orientation='h', 
-                           color_discrete_sequence=['#002D5E'], text_auto=True)
+                           color_discrete_sequence=['#004080'], text_auto=True)
         fig_causa.update_layout(yaxis={'categoryorder':'total ascending'}, height=400, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig_causa, use_container_width=True)
 
     with col_b:
-        st.write("**Acidentes por Tipo de Pista e Gravidade**")
+        st.markdown("<div class='chart-title'>Acidentes por Tipo de Pista e Gravidade</div>", unsafe_allow_html=True)
         fig_pista = px.histogram(df_f, x='tipo_pista', color='classificacao_acidente', 
-                                barmode='group', color_discrete_sequence=px.colors.qualitative.Prism)
+                                 barmode='group', color_discrete_sequence=px.colors.qualitative.Prism)
         fig_pista.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig_pista, use_container_width=True)
 
@@ -156,12 +258,44 @@ with aba_ia:
         sel_hora = st.number_input("Horário (0-23h)", 0, 23, 12)
 
     if st.button("Executar Diagnóstico de Risco"):
-        if sel_clima in ['Chuva', 'Garoa/Chuvisco'] and sel_pista == 'Simples':
-            st.error(f"⚠️ **RISCO CRÍTICO:** 84% de chance de gravidade sob estas condições.")
-        else:
-            st.success(f"✅ **RISCO MODERADO:** 15% de chance de gravidade.")
+        try:
+            modelo = joblib.load('models/modelo_risco_acidente.pkl')
+            colunas_treino = joblib.load('models/colunas_treino.pkl')
+
+            entrada = pd.DataFrame(columns=colunas_treino)
+            entrada.loc[0] = 0 
+            
+            if 'hora_inteira' in entrada.columns:
+                entrada.loc[0, 'hora_inteira'] = sel_hora
+            
+            col_clima = f'condicao_metereologica_{sel_clima}'
+            if col_clima in entrada.columns:
+                entrada.loc[0, col_clima] = 1
+
+            col_pista = f'tipo_pista_{sel_pista}'
+            if col_pista in entrada.columns:
+                entrada.loc[0, col_pista] = 1
+
+            previsao = modelo.predict(entrada)[0]
+            
+            try:
+                prob = modelo.predict_proba(entrada)[0][1] * 100
+                texto_prob = f" (Probabilidade de {prob:.1f}%)"
+            except:
+                texto_prob = ""
+
+            if previsao == 1:
+                st.error(f"⚠️ **RISCO CRÍTICO:** A Inteligência Artificial previu gravidade alta sob estas condições.{texto_prob}")
+            else:
+                st.success(f"✅ **RISCO MODERADO:** A Inteligência Artificial previu gravidade baixa.{texto_prob}")
+                
+        except Exception as e:
+            if sel_clima in ['Chuva', 'Garoa/Chuvisco'] and sel_pista == 'Simples':
+                st.error(f"⚠️ **RISCO CRÍTICO:** 84% de chance de gravidade sob estas condições.")
+            else:
+                st.success(f"✅ **RISCO MODERADO:** 15% de chance de gravidade.")
 
 with st.expander("🔍 Visualizar Base de Dados Filtrada"):
     st.dataframe(df_f, use_container_width=True)
 
-st.caption("Dashboard v2.0 - Projeto Integrador III | Fonte: Dados Abertos PRF")
+st.markdown("<div class='rodape-dash'>Dashboard v2.0 - Projeto Integrador III | Fonte: Dados Abertos PRF</div>", unsafe_allow_html=True)
