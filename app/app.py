@@ -79,7 +79,6 @@ st.markdown("""
         font-weight: 800 !important;
     }
 
-    /* ======== CENTRALIZAÇÃO E EXPANSÃO DAS ABAS (TABS) ======== */
     div[data-testid="stTabList"] {
         display: flex !important;
         justify-content: center !important; /* Centraliza as abas conforme as linhas roxas */
@@ -123,7 +122,6 @@ st.markdown("""
         font-weight: 500 !important;
     }
 
-    /* ======== NOVOS AJUSTES PARA A BARRA LATERAL (SIDEBAR) ======== */
 
     /* Filtros Padrões (Município, Via, etc) */
     [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p,
@@ -133,7 +131,6 @@ st.markdown("""
         color: var(--text-color) !important;
     }
 
-    /* ======== EXCLUSIVO: NOVO MODELO DA FAIXA HORÁRIA (SLIDER) ======== */
     
     /* Título do Slider muito maior, em negrito e destacado em Azul PRF */
     div[data-testid="stSlider"] label p {
