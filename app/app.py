@@ -8,163 +8,183 @@ import joblib
 # 1. Configurações de Interface
 st.set_page_config(page_title="PRF-ES Dashboard", layout="wide", page_icon="🚔")
 
-# 2. Estilização CSS "PRO" e Adaptável ao Dark/Light Mode
+# 2. Estilização CSS e Adaptável ao Dark/Light Mode
 st.markdown("""
     <style>
-    /* Tags dos filtros em Azul (Ajustado para ficar bom no claro e escuro) */
+    .block-container {
+        padding-top: 1.5rem !important;
+    }
+
+    /* Tags dos filtros em Azul */
     span[data-baseweb="tag"] {
         background-color: #004080 !important;
         color: white !important;
-        border-radius: 5px !important;
+        border-radius: 2px !important; 
+        font-size: 0.7rem !important; 
+        padding: 2px 4px !important; 
     }
     
     .stSlider > div > div > div > div {
         background-color: #004080 !important;
     }
 
-    /* Cards de Métricas Dinâmicos */
+    /* Cards de Métricas Dinâmicos - */
     div[data-testid="stMetric"] {
-        /* Usa a cor secundária do tema (cinza claro no Light, cinza escuro no Dark) */
         background-color: var(--secondary-background-color) !important;
-        padding: 25px !important;
-        border-radius: 15px !important;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
-        border-left: 6px solid #004080 !important; 
+        padding: 5px 10px !important;  
+        border-radius: 5px !important;
+        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1) !important;
+        border-left: 3px solid #004080 !important; 
         transition: transform 0.2s ease-in-out;
     }
     
     /* Efeito de hover nos cards */
     div[data-testid="stMetric"]:hover {
-        transform: translateY(-5px);
+        transform: translateY(-2px); 
     }
 
     /* Títulos principais adaptáveis */
     h1 {
         font-weight: 800 !important;
         letter-spacing: -1px;
+        font-size: 1.5rem !important;
+        padding-bottom: 0px !important;
+        margin-top: 0px !important; 
+        margin-bottom: 5px !important; 
+    }
+    
+    /* Subheaders */
+    h3 {
+        font-size: 1rem !important; 
     }
 
     /* Botão com sombra e cor sólida */
     div.stButton > button {
         background-color: #004080;
         color: white;
-        border-radius: 10px;
+        border-radius: 4px !important;
         border: none;
         font-weight: 600;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+        padding: 2px 10px !important; 
+        font-size: 0.8rem !important;
     }
-
 
     /* Subtítulo */
     .subtitulo-header {
-        font-size: 22px !important;
-        color: var(--text-color) !important; /* Adapta automático */
-        opacity: 0.8; /* Dá o tom cinza suave sem perder a cor original */
+        color: var(--text-color) !important; 
+        opacity: 0.8; 
         font-weight: 500 !important;
-        margin-top: -10px !important;
-        margin-bottom: 30px !important;
+        margin-top: 5px !important; 
+        margin-bottom: 15px !important; 
+        font-size: 0.8rem !important; 
     }
 
     /* Rótulos das Métricas (ex: "Total de Ocorrências") */
     [data-testid="stMetricLabel"] * {
-        font-size: 18px !important;
         font-weight: 600 !important;
         color: var(--text-color) !important;
         opacity: 0.7;
-    }
+        font-size: 0.9rem !important;
 
     /* Valores das Métricas (os números) */
     [data-testid="stMetricValue"] {
-        font-size: 36px !important;
         font-weight: 800 !important;
+        font-size: 1.8rem !important; 
     }
 
     div[data-testid="stTabList"] {
         display: flex !important;
-        justify-content: center !important; /* Centraliza as abas conforme as linhas roxas */
+        justify-content: center !important; 
         width: 100% !important;
-        gap: 15px !important; /* Espaçamento entre os blocos */
+        gap: 2px !important;
     }
 
+    /* Botões das abas com tamanho padrão do Streamlit */
     button[data-baseweb="tab"] {
-        font-size: 22px !important; /* Letras maiores para formato botão profissional */
-        font-weight: 700 !important;
-        padding: 10px 30px !important; /* Mais área de clique */
-        border-radius: 8px 8px 0 0 !important;
+        font-weight: 600 !important;
+        border-radius: 4px 4px 0 0 !important;
+        padding: 2px 10px !important; 
     }
     
     button[data-baseweb="tab"] p {
-        font-size: 22px !important;
-        font-weight: 700 !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important; 
     }
 
     /* Títulos dos Gráficos na aba de estatísticas */
     .chart-title {
-        font-size: 20px !important;
         font-weight: 700 !important;
         color: var(--text-color) !important;
-        margin-bottom: 15px !important;
+        margin-bottom: 2px !important; 
+        font-size: 0.85rem !important; 
     }
 
     /* Título do Expander */
     [data-testid="stExpander"] summary p {
-        font-size: 18px !important;
         font-weight: 600 !important;
         color: var(--text-color) !important;
+        font-size: 0.8rem !important; 
     }
 
     /* Texto do Rodapé */
     .rodape-dash {
-        font-size: 15px !important;
         color: var(--text-color) !important;
         opacity: 0.6;
-        margin-top: 30px !important;
+        margin-top: 10px !important;
         font-weight: 500 !important;
+        font-size: 0.6rem !important; 
     }
 
+
+    /* Título Sidebar */
+    [data-testid="stSidebar"] h1 {
+        font-size: 1.2rem !important; 
+    }
 
     /* Filtros Padrões (Município, Via, etc) */
     [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p,
     [data-testid="stSidebar"] label p {
-        font-size: 16px !important;
         font-weight: 600 !important;
         color: var(--text-color) !important;
+        font-size: 0.75rem !important;
     }
 
     
-    /* Título do Slider muito maior, em negrito e destacado em Azul PRF */
+    /* Título do Slider */
     div[data-testid="stSlider"] label p {
-        font-size: 19px !important;
         font-weight: 700 !important;
         color: #004080 !important;
-        margin-bottom: 8px !important;
+        margin-bottom: 2px !important; 
+        font-size: 0.75rem !important; 
     }
 
-    /* Números flutuantes maiores com fundo estilo "tag" discreto para parecer profissional */
+    /* Fundo discreto para os números flutuantes sem inflar o tamanho */
     div[data-testid="stThumbValue"] {
-        font-size: 17px !important;
-        font-weight: 800 !important;
+        font-weight: 700 !important;
         color: #004080 !important;
         background-color: var(--secondary-background-color) !important;
-        padding: 3px 10px !important;
-        border-radius: 8px !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+        border-radius: 3px !important; 
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+        font-size: 0.7rem !important;
+        padding: 2px !important;
     }
 
-    /* Números das extremidades (0 e 23) maiores e mais visíveis */
+    /* Números das extremidades (0 e 23) */
     div[data-testid="stSlider"] span[data-baseweb="typography"] {
-        font-size: 14px !important;
         font-weight: 600 !important;
         opacity: 0.9 !important;
+        font-size: 0.65rem !important;
     }
 
-    /* Linha do Slider ligeiramente mais espessa e moderna */
+    /* Linha do Slider com espessura padronizada */
     div[data-testid="stSlider"] > div > div > div {
-        height: 7px !important;
-        border-radius: 4px !important;
+        height: 2px !important; 
+        border-radius: 2px !important;
     }
     </style>
     """, unsafe_allow_html=True)
+
 # 3. Carregamento e Limpeza de Dados 
 @st.cache_data
 def load_data():
@@ -177,8 +197,8 @@ def load_data():
 
 df = load_data()
 
-# --- SIDEBAR   ---
-st.sidebar.image("https://logodownload.org/wp-content/uploads/2014/10/prf-logo-1.png", width=140)
+# --- SIDEBAR  ---
+st.sidebar.image("https://logodownload.org/wp-content/uploads/2014/10/prf-logo-1.png", width=70)
 st.sidebar.title("Central de Comando")
 
 with st.sidebar.expander("📍 Filtros de Localização", expanded=True):
@@ -201,7 +221,7 @@ df_f = df_f[
 ]
 
 # --- PAINEL PRINCIPAL ---
-st.title("🚓 Sistema de Inteligência Viária - PRF Espírito Santo")
+st.markdown("<h1>🚓 Sistema de Inteligência Viária - PRF Espírito Santo</h1>", unsafe_allow_html=True)
 st.markdown("<p class='subtitulo-header'>Monitoramento em tempo real de pontos críticos e severidade de acidentes.</p>", unsafe_allow_html=True)
 
 kpi1, kpi2, kpi3, kpi4 = st.columns(4)
@@ -224,7 +244,7 @@ aba_mapa, aba_estatisticas, aba_ia = st.tabs(["📍 Mapa de Calor", "📊 Análi
 with aba_mapa:
     st.subheader("Concentração Geográfica de Acidentes")
     mapa_data = df_f[['latitude', 'longitude']].rename(columns={'latitude': 'lat', 'longitude': 'lon'})
-    st.map(mapa_data, zoom=7, use_container_width=True)
+    st.map(mapa_data, zoom=7, height=300, use_container_width=True)
 
 with aba_estatisticas:
     col_a, col_b = st.columns(2)
@@ -233,14 +253,14 @@ with aba_estatisticas:
         causas = df_f['causa_acidente'].value_counts().head(10).reset_index()
         fig_causa = px.bar(causas, x='count', y='causa_acidente', orientation='h', 
                            color_discrete_sequence=['#004080'], text_auto=True)
-        fig_causa.update_layout(yaxis={'categoryorder':'total ascending'}, height=400, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
+        fig_causa.update_layout(yaxis={'categoryorder':'total ascending'}, height=200, margin=dict(l=0, r=0, t=10, b=0), plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig_causa, use_container_width=True)
 
     with col_b:
         st.markdown("<div class='chart-title'>Acidentes por Tipo de Pista e Gravidade</div>", unsafe_allow_html=True)
         fig_pista = px.histogram(df_f, x='tipo_pista', color='classificacao_acidente', 
                                  barmode='group', color_discrete_sequence=px.colors.qualitative.Prism)
-        fig_pista.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
+        fig_pista.update_layout(height=200, margin=dict(l=0, r=0, t=10, b=0), plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig_pista, use_container_width=True)
 
 with aba_ia:
