@@ -9,22 +9,26 @@ Sistema desenvolvido para análise de acidentes da PRF no Espírito Santo.
 [🔗 Assista a demonstração no YouTube](https://youtu.be/7HDAW45lSng)
 
 ## Funcionalidades
-- **Análise Estatística e EDA:** Identificação de horários de pico, tipos de pista mais propensos a acidentes e top causas.
-- **Mapa de Calor:** Concentração geográfica de ocorrências no ES.
-- **Simulador de Risco de Acidentes (IA):** Integração de um modelo preditivo (Random Forest) para classificar o risco do acidente com base na condição climática e do tipo de via.
+- **Filtros Dinâmicos:** Filtre os dados do painel por Município, Rodovia, Condição Climática, Tipo de Pista e Faixa Horária.
+- **Exportação de Dados:** Possibilidade de baixar um arquivo `.csv` apenas com os dados filtrados diretamente pela barra lateral da interface.
+- **Métricas em Tempo Real (KPIs):** Visualização rápida através de cards informativos do Total de Ocorrências, Vítimas Fatais, Acidentes Graves e Índice de Letalidade.
+- **Mapa de Calor Geográfico:** Concentração interativa de ocorrências no ES utilizando geolocalização (Lat/Lon).
+- **Análise Estatística Avançada:** Gráficos interativos (Plotly) para Top 10 Causas de Acidentes.
+- **Simulador de Risco de Acidentes (IA):** Integração de um modelo preditivo (Random Forest balanceado) para classificar o nível de risco e a probabilidade de gravidade do acidente com base na entrada do utilizador.
+- **Transparência da IA (Explainable AI):** Gráfico interativo de *Feature Importance* que demonstra claramente quais fatores (clima, pista, causa, hora) mais influenciam as decisões preditivas do modelo de Machine Learning.
 
 ## Tecnologias Utilizadas
 - **Linguagem:** Python
 - **Manipulação de Dados:** Pandas, NumPy
 - **Machine Learning:** Scikit-Learn (Random Forest), XGBoost, Joblib
-- **Visualização:** Matplotlib, Seaborn, Plotly
-- **Aplicação Web:** Streamlit
+- **Visualização de Dados:** Plotly (Gráficos Interativos), Matplotlib, Seaborn
+- **Aplicação Web:** Streamlit, HTML/CSS customizado
 
 ## Estrutura do Repositório
+- `/app`: Código fonte principal do Dashboard Streamlit (`app.py`).
 - `/data`: Contém as bases de dados brutas e limpas (`prf_es_clean.csv`).
-- `/notebooks`: Notebooks Jupyter com a Análise Exploratória (`02_eda.ipynb`) e treinamento dos modelos (`03_modelagem.ipynb`).
-- `/models`: Modelos exportados e variáveis de treino (`.pkl`).
-- `/app`: Código fonte do Dashboard Streamlit (`app.py`).
+- `/models`: Modelos de classificação exportados (`modelo_risco_acidente.pkl`) e mapeamento de variáveis de treino (`colunas_treino.pkl`).
+- `/notebooks`: Notebooks Jupyter com a Análise Exploratória (`02_eda.ipynb`) e treino/validação dos modelos Random Forest e XGBoost (`03_modelagem.ipynb`).
 
 ## Como executar o projeto
 
