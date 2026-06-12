@@ -6,7 +6,7 @@ Este projeto (Projeto Integrador III) visa analisar dados abertos da Polícia Ro
 
 Sistema desenvolvido para análise de acidentes da PRF no Espírito Santo.
 
-[🔗 Assista a demonstração no YouTube](https://youtu.be/7HDAW45lSng)
+[🔗 Assista a demonstração no YouTube](https://www.youtube.com/watch?v=GtDiVeV_Ixs)
 
 ## Funcionalidades
 - **Filtros Dinâmicos:** Filtre os dados do painel por Município, Rodovia, Condição Climática, Tipo de Pista e Faixa Horária.
